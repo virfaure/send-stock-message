@@ -1,0 +1,18 @@
+{
+  "id": 1,
+  "jsonrpc": 2.0,
+  "method": "magento.inventory.source_stock_management.adjustment",
+  "params": {
+    "adjustment": {
+      "source_id": "{{.Source}}",
+      "reason": "performance-test",
+      "created_on": "{{.Now}}",
+      "adjustments": [
+        {
+          "sku": "{{.Sku}}",
+          "quantity": {{.Diff}}
+      }
+      ]
+    }
+  }
+}

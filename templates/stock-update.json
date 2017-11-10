@@ -1,0 +1,18 @@
+{
+  "id": 1,
+  "jsonrpc": 2.0,
+  "method": "magento.inventory.source_stock_management.update",
+  "params": {
+    "snapshot": {
+      "source_id": "{{.Source}}",
+      "mode": "DELTA",
+      "created_on": "{{.Now}}",
+      "stock": [
+        {
+          "sku": "{{.Sku}}",
+          "quantity": {{.Qty}}
+      }
+      ]
+    }
+  }
+}
