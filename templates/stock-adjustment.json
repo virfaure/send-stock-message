@@ -1,7 +1,7 @@
 {
   "id": 1,
   "jsonrpc": 2.0,
-  "method": "magento.inventory.source_stock_management.adjustment",
+  "method": "magento.inventory.source_stock_management.adjust",
   "params": {
     "adjustment": {
       "source_id": "{{.Source}}",

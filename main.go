@@ -10,16 +10,20 @@ import (
 	"bytes"
 	"net/http"
 	"sync"
-)
-
-const (
-	messageNumber    = 1000
-	skuNumber        = 1000
-	sourceNumber     = 100
-	awsApiGatewayUrl = "https://28097ldii7.execute-api.us-west-2.amazonaws.com/beta/jsonrpc/"
+	"flag"
+	"github.com/magento-mcom/send-messages/app"
 )
 
 func main() {
+	filename := flag.String("config", "config.yml", "Configuration file")
+	flag.Parse()
+
+	config, err := app.Load(*filename)
+
+	if err != nil {
+		panic(fmt.Errorf("Failed to load configuration: %v", err))
+	}
+	
 	start := time.Now()
 	log.Printf("Started at")
 
@@ -32,7 +36,7 @@ func main() {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			sendStockMessageToSqs(templates, clients, i)
+			sendStockMessageToSqs(config, templates, clients, i)
 		}()
 	}
 
@@ -42,8 +46,8 @@ func main() {
 	fmt.Printf("Took %v seconds \n", duration.Seconds())
 }
 
-func sendStockMessageToSqs(templates []string, clients []string, routine int) {
-	for i := 0; i < messageNumber; i++ {
+func sendStockMessageToSqs(config app.Config, templates []string, clients []string, routine int) {
+	for i := 0; i < config.Messages; i++ {
 		file := templates[rand.Intn(len(templates))]
 		client := clients[rand.Intn(len(clients))]
 
@@ -56,9 +60,9 @@ func sendStockMessageToSqs(templates []string, clients []string, routine int) {
 		}
 
 		stockUpdateValues := map[string]interface{}{
-			"Source": fmt.Sprintf("SOURCE-%v", rand.Intn(sourceNumber)),
-			"Sku":    fmt.Sprintf("SKU-%v", rand.Intn(skuNumber)),
-			"Now":    time.Now(),
+			"Source": fmt.Sprintf("SOURCE-%v", rand.Intn(config.Sources)),
+			"Sku":    fmt.Sprintf("SKU-%v", rand.Intn(config.Skus)),
+			"Now":    time.Now().Format(time.RFC850),
 			"Qty":    rand.Intn(10000),
 			"Diff":   rand.Int()%10 - 5,
 		}
@@ -72,7 +76,7 @@ func sendStockMessageToSqs(templates []string, clients []string, routine int) {
 		buffer := bytes.NewBuffer(nil)
 		err = tmpl.Execute(buffer, stockUpdateValues)
 
-		req, _ := http.NewRequest(http.MethodPost, awsApiGatewayUrl + client, bytes.NewReader([]byte(buffer.String())))
+		req, _ := http.NewRequest(http.MethodPost, config.Endpoint+client, bytes.NewReader([]byte(buffer.String())))
 		_, err = http.DefaultClient.Do(req)
 
 		if err != nil {
