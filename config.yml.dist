@@ -1,0 +1,4 @@
+messages:  1000
+skus:      10
+sources:   10
+endpoint:  "http://127.0.0.1:8083/"

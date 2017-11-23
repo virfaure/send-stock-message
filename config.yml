@@ -1,5 +1,0 @@
-messages:  10
-skus:      10
-sources:   10
-endpoint:  "https://28097ldii7.execute-api.us-west-2.amazonaws.com/beta/jsonrpc/"
-#endpoint:  "http://127.0.0.1:8083/"
