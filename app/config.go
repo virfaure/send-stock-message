@@ -9,7 +9,10 @@ type Config struct {
 	Messages int
 	Skus int
 	Sources int
+	Queue string
 	Endpoint string
+	Clients []string
+	Templates []string
 }
 
 func Load(file string) (cfg Config, err error) {

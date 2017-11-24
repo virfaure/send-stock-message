@@ -1,5 +1,5 @@
 {
-  "id": 1,
+  "id": "1",
   "jsonrpc": 2.0,
   "method": "magento.inventory.source_stock_management.adjust",
   "params": {

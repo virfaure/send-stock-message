@@ -62,6 +62,7 @@ func sendReindexRequestToSqs(config app.Config, reindexTemplate string, clients 
 		reindexRequestValues := map[string]interface{}{
 			"Source": fmt.Sprintf("SOURCE-%v", rand.Intn(config.Sources)),
 			"Sku":    fmt.Sprintf("SKU-%v", rand.Intn(config.Skus)),
+			"Client": client,
 		}
 
 		tmpl, err := template.New("reindex-request").Parse(string(body))

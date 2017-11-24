@@ -27,8 +27,8 @@ func main() {
 	start := time.Now()
 	log.Printf("Started at")
 
-	templates := []string{"templates/stock-adjustment.json", "templates/stock-update.json"}
-	clients := []string{"HH", "DYSON", "DEVLYN", "LUMA", "TOUS"}
+	templates := config.Templates
+	clients := config.Clients
 
 	wg := sync.WaitGroup{}
 
@@ -36,7 +36,7 @@ func main() {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			sendStockMessageToSqs(config, templates, clients, i)
+			sendStockMessageToEndpoint(config, templates, clients, i)
 		}()
 	}
 
@@ -46,7 +46,7 @@ func main() {
 	fmt.Printf("Took %v seconds \n", duration.Seconds())
 }
 
-func sendStockMessageToSqs(config app.Config, templates []string, clients []string, routine int) {
+func sendStockMessageToEndpoint(config app.Config, templates []string, clients []string, routine int) {
 	for i := 0; i < config.Messages; i++ {
 		file := templates[rand.Intn(len(templates))]
 		client := clients[rand.Intn(len(clients))]

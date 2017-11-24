@@ -1,11 +1,5 @@
 {
-  "id": 1,
-  "jsonrpc": 2.0,
-  "method": "magento.inventory.aggregate_stock_management.reindex",
-  "params": {
-    "reindex": {
-      "source": "{{.Source}}",
-      "sku": "{{.Sku}}"
-    }
-  }
+  "source": "{{.Source}}",
+  "sku": "{{.Sku}}",
+  "client": "{{.Client}}"
 }
