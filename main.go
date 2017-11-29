@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Failed to load configuration: %v", err))
 	}
-	
+
 	start := time.Now()
 	log.Printf("Started at")
 
@@ -32,18 +32,21 @@ func main() {
 
 	wg := sync.WaitGroup{}
 
-	for i := 0; i < 50; i++ {
+	for i := 0; i < config.Routines; i++ {
 		wg.Add(1)
-		go func() {
+		go func(counter int) {
 			defer wg.Done()
-			sendStockMessageToEndpoint(config, templates, clients, i)
-		}()
+			sendStockMessageToEndpoint(config, templates, clients, counter)
+		}(i)
 	}
 
 	wg.Wait()
 
-	duration := time.Since(start)
-	fmt.Printf("Took %v seconds \n", duration.Seconds())
+	defer func() {
+		duration := time.Since(start)
+		fmt.Printf("%d messages sent and it took %v seconds \n", config.Routines * config.Messages, duration.Seconds())
+	}()
+
 }
 
 func sendStockMessageToEndpoint(config app.Config, templates []string, clients []string, routine int) {
@@ -57,6 +60,7 @@ func sendStockMessageToEndpoint(config app.Config, templates []string, clients [
 
 		if err != nil {
 			log.Printf("Cannot read %s /n", file)
+			log.Println(err)
 		}
 
 		stockUpdateValues := map[string]interface{}{
@@ -70,7 +74,7 @@ func sendStockMessageToEndpoint(config app.Config, templates []string, clients [
 		tmpl, err := template.New("stock-update").Parse(string(body))
 
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 
 		buffer := bytes.NewBuffer(nil)
@@ -80,7 +84,7 @@ func sendStockMessageToEndpoint(config app.Config, templates []string, clients [
 		_, err = http.DefaultClient.Do(req)
 
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 	}
 }

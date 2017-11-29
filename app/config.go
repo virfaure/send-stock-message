@@ -6,6 +6,7 @@ import (
 )
 
 type Config struct {
+	Routines int
 	Messages int
 	Skus int
 	Sources int

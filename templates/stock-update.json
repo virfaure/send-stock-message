@@ -1,6 +1,6 @@
 {
   "id": "1",
-  "jsonrpc": 2.0,
+  "jsonrpc": "2.0",
   "method": "magento.inventory.source_stock_management.update",
   "params": {
     "snapshot": {
