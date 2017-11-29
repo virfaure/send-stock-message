@@ -1,4 +1,7 @@
-messages:  1000
+routines:  50
+messages:  100
 skus:      10
 sources:   10
-endpoint:  "http://127.0.0.1:8083/"
+endpoint:  "http://127.0.0.1:3000/"
+clients:   ["HH", "DYSON", "DEVLYN", "LUMA", "TOUS", "TEST"]
+templates: ["templates/stock-adjustment.json", "templates/stock-update.json"]
