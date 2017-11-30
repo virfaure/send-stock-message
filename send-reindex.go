@@ -27,7 +27,7 @@ func main() {
 
 	reindexTemplate := "templates/reindex-request.json"
 	clients := []string{"HH", "DYSON", "DEVLYN", "LUMA", "TOUS"}
-gs
+
 	wg := sync.WaitGroup{}
 
 	for i := 0; i < config.Routines; i++ {
