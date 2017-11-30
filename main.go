@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"sync"
 	"flag"
-	"github.com/magento-mcom/send-messages/configuration"
+	"github.com/magento-mcom/send-stock-message/configuration"
 )
 
 func main() {

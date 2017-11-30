@@ -5,7 +5,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"log"
-	"github.com/magento-mcom/send-messages/configuration"
+	"github.com/magento-mcom/send-stock-message/configuration"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 

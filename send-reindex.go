@@ -6,8 +6,8 @@ import (
 	"time"
 	"sync"
 	"flag"
-	"github.com/magento-mcom/send-messages/app"
-	"github.com/magento-mcom/send-messages/configuration"
+	"github.com/magento-mcom/send-stock-message/app"
+	"github.com/magento-mcom/send-stock-message/configuration"
 )
 
 func main() {
@@ -27,7 +27,7 @@ func main() {
 
 	reindexTemplate := "templates/reindex-request.json"
 	clients := []string{"HH", "DYSON", "DEVLYN", "LUMA", "TOUS"}
-
+gs
 	wg := sync.WaitGroup{}
 
 	for i := 0; i < config.Routines; i++ {

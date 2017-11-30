@@ -1,8 +1,8 @@
 package app
 
 import (
-	"github.com/magento-mcom/send-messages/configuration"
-	"github.com/magento-mcom/send-messages/consumer"
+	"github.com/magento-mcom/send-stock-message/configuration"
+	"github.com/magento-mcom/send-stock-message/consumer"
 	"fmt"
 	"io/ioutil"
 	"log"

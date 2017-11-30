@@ -6,8 +6,8 @@ import (
 	"time"
 	"sync"
 	"flag"
-	"github.com/magento-mcom/send-messages/app"
-	"github.com/magento-mcom/send-messages/configuration"
+	"github.com/magento-mcom/send-stock-message/app"
+	"github.com/magento-mcom/send-stock-message/configuration"
 )
 
 func main() {

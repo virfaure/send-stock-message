@@ -5,3 +5,12 @@ sources:   10
 endpoint:  "http://127.0.0.1:3000/"
 clients:   ["HH", "DYSON", "DEVLYN", "LUMA", "TOUS", "TEST"]
 templates: ["templates/stock-adjustment.json", "templates/stock-update.json"]
+
+queues:
+  export: "https://sqs.us-west-2.amazonaws.com/277100466574/inventory-export"
+  reindex: "https://sqs.us-west-2.amazonaws.com/277100466574/inventory-reindexer"
+  region: "us-west-2"
+  profile: "training"
+
+app:
+  routines: 20
