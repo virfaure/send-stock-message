@@ -11,14 +11,14 @@ import (
 	"net/http"
 	"sync"
 	"flag"
-	"github.com/magento-mcom/send-messages/app"
+	"github.com/magento-mcom/send-messages/configuration"
 )
 
 func main() {
 	filename := flag.String("config", "config.yml", "Configuration file")
 	flag.Parse()
 
-	config, err := app.Load(*filename)
+	config, err := configuration.Load(*filename)
 
 	if err != nil {
 		panic(fmt.Errorf("Failed to load configuration: %v", err))
@@ -49,7 +49,7 @@ func main() {
 
 }
 
-func sendStockMessageToEndpoint(config app.Config, templates []string, clients []string, routine int) {
+func sendStockMessageToEndpoint(config configuration.Config, templates []string, clients []string, routine int) {
 	for i := 0; i < config.Messages; i++ {
 		file := templates[rand.Intn(len(templates))]
 		client := clients[rand.Intn(len(clients))]

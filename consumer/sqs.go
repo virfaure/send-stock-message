@@ -4,71 +4,73 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"log"
-	"encoding/json"
-	"github.com/magento-mcom/send-messages/app"
+	"github.com/magento-mcom/send-messages/configuration"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 )
 
 var sqsSession *sqs.SQS
 
-type Message struct{}
-
-type Consumer struct {
-	sqs    *sqs.SQS
-	config app.Config
+func NewSQSConsumer(config configuration.Config) Consumer {
+	return &sqsConsumer{config}
 }
 
-func (consumer *Consumer) getSqsSession() () {
+type sqsConsumer struct {
+	config configuration.Config
+}
+
+type Message struct{}
+
+func (consumer *sqsConsumer) getSqsSession(queue string) (*sqs.SQS) {
 	if sqsSession == nil {
 		sess, err := session.NewSession(&aws.Config{
-			Region:      aws.String(consumer.config.Consumer.Region),
-			Credentials: credentials.NewSharedCredentials("", consumer.config.Consumer.Profile),
+			Region:      aws.String(consumer.config.Queues.Region),
+			Endpoint:    aws.String(queue),
+			Credentials: credentials.NewSharedCredentials("", consumer.config.Queues.Profile),
 		})
 
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		sqsSession = consumer.sqs.New(sess)
+		sqsSession = sqs.New(sess)
 	}
 
 	return sqsSession
 }
 
-func (consumer *sqsConsumer) SendMessages() []common.ReindexRequest {
-	svc := consumer.getSqsSession()
+func (consumer *sqsConsumer) SendReindexMessage(body string) error {
+	svc := consumer.getSqsSession(consumer.config.Queues.Reindex)
 
-	result, err := svc.ReceiveMessage(&sqs.ReceiveMessageInput{
-		QueueUrl:              &consumer.config.Consumer.Queue,
-		MessageAttributeNames: aws.StringSlice([]string{"client"}),
-		MaxNumberOfMessages:   aws.Int64(10),
-		VisibilityTimeout:     aws.Int64(36000), // 10 hours
-		WaitTimeSeconds:       aws.Int64(10),
-	})
+	params := &sqs.SendMessageInput{
+		MessageBody:  aws.String(string(body[:])),
+		QueueUrl:     aws.String(consumer.config.Queues.Reindex),
+		DelaySeconds: aws.Int64(3),
+	}
+
+	_, err := svc.SendMessage(params)
 
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	if len(result.Messages) == 0 {
-		log.Println("No message in the queue")
-		return nil
+	return nil
+}
+
+func (consumer *sqsConsumer) SendExportMessage(body string) error {
+	svc := consumer.getSqsSession(consumer.config.Queues.Export)
+
+	params := &sqs.SendMessageInput{
+		MessageBody:  aws.String(string(body[:])),
+		QueueUrl:     aws.String(consumer.config.Queues.Export),
+		DelaySeconds: aws.Int64(3),
 	}
 
-	var buffer []common.ReindexRequest
+	_, err := svc.SendMessage(params)
 
-	for _, message := range result.Messages {
-		var reindexRequest common.ReindexRequest
-		if err := json.Unmarshal([]byte(*message.Body), &reindexRequest); err != nil {
-			log.Printf("error unmarshalling: %v", err)
-			continue
-		}
-
-		buffer = append(buffer, reindexRequest)
-
-		deleteMessage(svc, consumer.config.Consumer.Queue, message)
+	if err != nil {
+		return err
 	}
 
-	return buffer
+	return nil
 }
